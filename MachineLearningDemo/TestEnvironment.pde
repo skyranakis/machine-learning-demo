@@ -39,9 +39,13 @@ public class TestEnvironment {
     //goalPosition[0] = env.length-2;
     //goalPosition[1] = 1;
     
-    env[15][25] = "Goal";
-    goalPosition[0] = 15;
-    goalPosition[1] = 25;
+    //env[15][25] = "Goal";
+    //goalPosition[0] = 15;
+    //goalPosition[1] = 25;
+    
+    env[35][10] = "Goal";
+    goalPosition[0] = 35;
+    goalPosition[1] = 10;
   }
   
   public boolean isEnterable(int r, int c) {
@@ -78,7 +82,8 @@ public class TestEnvironment {
     for (int i = 0; i < env.length; i++) {
       for (int j = 0; j < env[0].length; j++) {
         if (env[i][j].equals("Open")) {
-          continue;
+          fill(255);
+          stroke(255);
         }
         else if (env[i][j].equals("Wall")) {
           fill(0);

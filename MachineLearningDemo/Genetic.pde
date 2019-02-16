@@ -12,16 +12,18 @@ public class Genetic {
     this.SQUARE_SIZE = env.getSquareSize();
     this.NUM_MEMBERS = 50;
     this.testEnv = env;
-    this.create();
     this.r = new Random(SEED);
+    this.create();
   }
   
   public void makeMove(){
-    this.select();
-    this.reproduce();
+    this.testEnv.drawEnvironment();
     if(this.isPath()) {
       int[] path = this.winner.getMoves();
-      int[] position = this.testEnv.getStartPosition();
+      int[] position = new int[2];
+      position[0] = this.testEnv.getStartPosition()[0];
+      position[1] = this.testEnv.getStartPosition()[1];
+      int[] end = this.testEnv.getGoalPosition();
       for(int i = 0; i < path.length; i++) {
         int move = path[i];
         if(move == 0) {
@@ -36,18 +38,30 @@ public class Genetic {
         stroke(100, 100, 100);
         fill(100, 100, 100);
         rect(position[0]*SQUARE_SIZE, position[1]*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+        if (position[0] == end[0] && position[1] == end[1]) {
+           break; 
+        }
       }
+    } else {
+      this.drawOrganisms();
+      this.select();
+      this.reproduce();
     }
-    this.testEnv.drawEnvironment();
   }
   
   private void reproduce() {
     Organism[] newOrgs = new Organism[NUM_MEMBERS];
     for (int i = 0; i < NUM_MEMBERS; i++) {
-      newOrgs[i] = new Organism(this.selected[this.r.nextInt() % 5].getMoves()); //initialize move sequence to the moves of a random member of selected set
+      int[] moves = this.selected[Math.abs(this.r.nextInt() % 5)].getMoves();
+      int[] newMoves = new int[150];
+      for(int x = 0; x < 150; x++) {
+        newMoves[x] = moves[x];
+      }
+      newOrgs[i] = new Organism(newMoves); //initialize move sequence to the moves of a random member of selected set
       int[] index_changes = new int[10];
       for (int x = 0; x < index_changes.length; x++) {
-        index_changes[x] = this.r.nextInt() % 125; //select a random index to mutate
+        index_changes[x] = Math.abs(this.r.nextInt() % 125); //select a random index to mutate
+        //System.out.println(index_changes[x]);
         newOrgs[i].setMove(index_changes[x], this.r.nextInt() % 4); //mutate index to a random value
       }
     }
@@ -71,7 +85,7 @@ public class Genetic {
     initialEnds[0] = MAX_INT/2;
     initialEnds[1] = MAX_INT/2;
     for(int i = 0; i < 5; i++) {
-      closestOrgs[i] = new Organism(new int[1]); 
+      closestOrgs[i] = new Organism(new int[150]); 
       closestOrgs[i].setEnd(initialEnds); //initialize each starting organism to an impossibly large position 
     }
     for(int i = 0; i < this.NUM_MEMBERS; i++) {
@@ -94,7 +108,9 @@ public class Genetic {
   }
   
   private boolean growOrganism(Organism O) {
-    int[] current_square = this.testEnv.getStartPosition();
+    int[] current_square = new int[2];
+    current_square[0] = this.testEnv.getStartPosition()[0];
+    current_square[1] = this.testEnv.getStartPosition()[1];
     for(int i = 0; i < 150; i++) {
       int move = O.getMove(i);
       if(move == 0) {
@@ -116,7 +132,9 @@ public class Genetic {
   
   private boolean isPath() {
     for(int i = 0; i < NUM_MEMBERS; i++) {
-      int[] current_square = this.testEnv.getStartPosition();
+      int[] current_square = new int[2];
+      current_square[0] = this.testEnv.getStartPosition()[0];
+      current_square[1] = this.testEnv.getStartPosition()[1];
       for(int x = 0; x < 150; x++) {
         int move = this.organisms[i].getMove(x);
         if(move == 0) {
@@ -135,7 +153,35 @@ public class Genetic {
         }
       }
     }
-    return true;
+    return false;
+  }
+  
+  private void drawOrganisms() {
+      for(int i = 0; i < NUM_MEMBERS; i++) {
+        int[] path = this.organisms[i].getMoves();
+        int[] position = new int[2];
+        position[0] = this.testEnv.getStartPosition()[0];
+        position[1] = this.testEnv.getStartPosition()[1];
+        int[] end = this.testEnv.getGoalPosition();
+        for(int x = 0; x < path.length; x++) {
+          int move = path[x];
+          if(move == 0) {
+            position[1] -= 1;
+          } else if (move == 1) {
+            position[1] += 1;
+          } else if (move == 2) {
+            position[0] -= 1;
+          } else {
+            position[0] += 1;
+          }
+          stroke(100, 100, 100);
+          fill(100, 100, 100);
+          rect(position[0]*SQUARE_SIZE, position[1]*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+          if (position[0] == end[0] && position[1] == end[1]) {
+            break; 
+          }
+        }
+      }
   }
   
 }
