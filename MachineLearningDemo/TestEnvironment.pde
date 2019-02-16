@@ -27,21 +27,21 @@ public class TestEnvironment {
       env[env.length-1][i] = "Wall";
     }
     for (int i = 4; i < env.length-4; i++) {
-      env[i][10] = "Wall";
-      env[i][20] = "Wall";
+      env[i][(int)(env[0].length/3)] = "Wall";
+      env[i][(int)(2*env[0].length/3)] = "Wall";
     }
     
     env[1][env[0].length-2] = "Start";
     startPosition[0] = 1;
     startPosition[1] = env[0].length-2;
     
-    //env[env.length-2][1] = "Goal";
-    //goalPosition[0] = env.length-2;
-    //goalPosition[1] = 1;
+    env[env.length-2][1] = "Goal";
+    goalPosition[0] = env.length-2;
+    goalPosition[1] = 1;
     
-    env[10][25] = "Goal";
-    goalPosition[0] = 10;
-    goalPosition[1] = 25;
+    //env[20][25] = "Goal";
+    //goalPosition[0] = 20;
+    //goalPosition[1] = 25;
   }
   
   public boolean isEnterable(int r, int c) {
