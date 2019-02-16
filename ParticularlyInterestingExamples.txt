@@ -24,3 +24,20 @@ Swarm Intelligence (before redesigned to facilitate transport from start to goal
     	SQUARE_SIZE = env.getSquareSize();
     	HUNGRY_EXPLORATION = 0.2;
     	FULL_EXPLORATION = 0.8;
+
+Swarm Intelligence (with pathfinding)
+	SQUARE_SIZE = 20;
+	SEED = 0;
+	SQUARE_SIZE = size;
+   	DECAY_AMOUNT = 0.9995;
+	NUM_MEMBERS = 100;
+    	RELEASE_FREQUENCY = 5;
+    	FIND_PATHWAY = true;
+ 	LOOK_AHEAD_AMOUNT = 1;
+    	HUNGRY_TRAIL = 0;
+    	FULL_TRAIL = 100;
+    	FULL_WEAR_OFF = 0.99;
+    	SQUARE_SIZE = env.getSquareSize();
+    	HUNGRY_EXPLORATION = 0.4;
+    	FULL_EXPLORATION = 0.2;
+    	FIND_PATHWAY = pathway;

@@ -28,7 +28,12 @@ public class TestEnvironment {
     }
     for (int i = 4; i < env.length-4; i++) {
       env[i][(int)(env[0].length/3)] = "Wall";
+    }
+    for (int i = 4; i < env.length; i++) {
       env[i][(int)(2*env[0].length/3)] = "Wall";
+    }
+    for (int i = 1; i < (int)(env[0].length/3); i++) {
+      env[15][i] = "Wall";
     }
     
     env[1][env[0].length-2] = "Start";

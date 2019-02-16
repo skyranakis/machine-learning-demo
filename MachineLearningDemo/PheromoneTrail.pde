@@ -6,7 +6,7 @@ public class PheromoneTrail {
   
   public PheromoneTrail(int size) {
     SQUARE_SIZE = size;
-    DECAY_AMOUNT = 0.995;
+    DECAY_AMOUNT = 0.9995;
     int numHoriz = width/SQUARE_SIZE;
     int numVert = height/SQUARE_SIZE;
     trails = new double[numHoriz][numVert][2];
@@ -27,7 +27,13 @@ public class PheromoneTrail {
   
   public void putPheromone(int r, int c, double[] amount) {
     trails[r][c][0] += amount[0];
+    if (trails[r][c][0] > 500) {
+      trails[r][c][0] = 500;
+    }
     trails[r][c][1] += amount[1];
+    if (trails[r][c][1] > 500) {
+      trails[r][c][1] = 500;
+    }
   }
   
   public void decayPheromones() {

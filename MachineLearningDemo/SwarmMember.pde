@@ -23,20 +23,20 @@ public class SwarmMember {
   
   public SwarmMember(int[] pos, TestEnvironment env, PheromoneTrail pherTrail, Random r, boolean pathway) {
     
-    LOOK_AHEAD_AMOUNT = 3;
+    LOOK_AHEAD_AMOUNT = 1;
     HUNGRY_TRAIL = 0;
     FULL_TRAIL = 100;
     FULL_WEAR_OFF = 0.99;
     SQUARE_SIZE = env.getSquareSize();
-    HUNGRY_EXPLORATION = 0.2;
-    FULL_EXPLORATION = 0.8;
+    HUNGRY_EXPLORATION = 0.4;
+    FULL_EXPLORATION = 0.2;
     FIND_PATHWAY = pathway;
     
-    full = false;
+    full = FIND_PATHWAY;
     lastAtStart = true;
     lastAtGoal = false;
-    trailAmount = HUNGRY_TRAIL;
-    explorationRate = HUNGRY_EXPLORATION;
+    trailAmount = (FIND_PATHWAY) ? FULL_TRAIL : HUNGRY_TRAIL;
+    explorationRate = (FIND_PATHWAY) ? FULL_EXPLORATION : HUNGRY_EXPLORATION;
     position = new int[2];
     position[0] = pos[0];
     position[1] = pos[1];
