@@ -20,11 +20,11 @@ public class SwarmMember {
     name = "test";
     
     LOOK_AHEAD_AMOUNT = 3;
-    HUNGRY_TRAIL = 10;
+    HUNGRY_TRAIL = 1;
     FULL_TRAIL = 100;
     FULL_WEAR_OFF = 0.9;
     SQUARE_SIZE = env.getSquareSize();
-    EXPLORATION_RATE = 0.5;
+    EXPLORATION_RATE = 0.2;
     
     full = false;
     trailAmount = HUNGRY_TRAIL;

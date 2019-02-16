@@ -1,17 +1,22 @@
 public class Swarm {
   
   private final int NUM_MEMBERS;
-  private final int SEED;
+  private final int RELEASE_FREQUENCY;
   
   private int currentlyOut;
+  private int timeUntilNext;
+  
   private TestEnvironment testEnv;
   private PheromoneTrail pher;
   private SwarmMember[] members;
   
   public Swarm(TestEnvironment env, int seed) {
     NUM_MEMBERS = 5;
-    SEED = seed;
+    RELEASE_FREQUENCY = 15;
+    
     currentlyOut = 1;
+    timeUntilNext = RELEASE_FREQUENCY;
+    
     pher = new PheromoneTrail(SQUARE_SIZE);
     testEnv = env;
     members = new SwarmMember[NUM_MEMBERS];
@@ -26,7 +31,13 @@ public class Swarm {
       members[i].takeTurn();
     }
     if (currentlyOut < NUM_MEMBERS) {
-      currentlyOut++;
+      if (timeUntilNext == 0) {
+        currentlyOut++;
+        timeUntilNext = RELEASE_FREQUENCY;
+      }
+      else {
+        timeUntilNext--;
+      }
     }
     pher.decayPheromones();
     testEnv.drawEnvironment();
