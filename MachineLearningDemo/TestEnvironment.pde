@@ -39,8 +39,8 @@ public class TestEnvironment {
     //goalPosition[0] = env.length-2;
     //goalPosition[1] = 1;
     
-    env[15][25] = "Goal";
-    goalPosition[0] = 15;
+    env[10][25] = "Goal";
+    goalPosition[0] = 10;
     goalPosition[1] = 25;
   }
   

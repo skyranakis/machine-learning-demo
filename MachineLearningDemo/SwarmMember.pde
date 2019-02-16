@@ -24,7 +24,7 @@ public class SwarmMember {
     FULL_TRAIL = 100;
     FULL_WEAR_OFF = 0.9;
     SQUARE_SIZE = env.getSquareSize();
-    EXPLORATION_RATE = 0.5;
+    EXPLORATION_RATE = 0;
     
     full = false;
     trailAmount = HUNGRY_TRAIL;
