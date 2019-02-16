@@ -7,10 +7,12 @@ public class SwarmMember {
   private final int FULL_TRAIL;
   private final double FULL_WEAR_OFF;
   private final int SQUARE_SIZE;
-  private final double EXPLORATION_RATE;
+  private final double HUNGRY_EXPLORATION;
+  private final double FULL_EXPLORATION;
   
   private boolean full;
   private double trailAmount;
+  private double explorationRate;
   public int[] position;
   private TestEnvironment testEnv;
   private PheromoneTrail pher;
@@ -24,10 +26,13 @@ public class SwarmMember {
     FULL_TRAIL = 100;
     FULL_WEAR_OFF = 0.9;
     SQUARE_SIZE = env.getSquareSize();
-    EXPLORATION_RATE = 0.2;
+    HUNGRY_EXPLORATION = 0.2;
+    FULL_EXPLORATION = 1;
     
     full = false;
     trailAmount = HUNGRY_TRAIL;
+    explorationRate = HUNGRY_EXPLORATION;
+    
     position = new int[2];
     position[0] = pos[0];
     position[1] = pos[1];
@@ -37,24 +42,9 @@ public class SwarmMember {
   }
   
   public void takeTurn() {
-    handlePheromoneTrail();
     move();
+    handlePheromoneTrail();
     drawMember();
-  }
-  
-  private void handlePheromoneTrail() {
-    pher.putPheromone(position[0], position[1], trailAmount);
-    if (full) {
-      trailAmount *= FULL_WEAR_OFF;
-      if (trailAmount <= HUNGRY_TRAIL) {
-        trailAmount = HUNGRY_TRAIL;
-        full = false;
-      }
-    }
-    if (testEnv.getReward(position[0], position[1]) > 0) {
-      full = true;
-      trailAmount = FULL_TRAIL;
-    }
   }
   
   private void move() {
@@ -77,7 +67,7 @@ public class SwarmMember {
     
     int[] target = new int[2];
     double explore = rand.nextDouble();
-    if (explore < EXPLORATION_RATE) {
+    if (explore < explorationRate) {
       target = explore();
     }
     else {
@@ -134,6 +124,23 @@ public class SwarmMember {
       target[1] = position[1];
     }
     return target;
+  }
+  
+  private void handlePheromoneTrail() {
+    pher.putPheromone(position[0], position[1], trailAmount);
+    if (full) {
+      trailAmount *= FULL_WEAR_OFF;
+      if (trailAmount <= HUNGRY_TRAIL) {
+        full = false;
+        trailAmount = HUNGRY_TRAIL;
+        explorationRate = HUNGRY_EXPLORATION;
+      }
+    }
+    if (testEnv.getReward(position[0], position[1]) > 0) {
+      full = true;
+      trailAmount = FULL_TRAIL;
+      explorationRate = FULL_EXPLORATION;
+    }
   }
   
   private void drawMember() {

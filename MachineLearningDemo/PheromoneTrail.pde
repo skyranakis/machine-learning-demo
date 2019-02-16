@@ -41,8 +41,8 @@ public class PheromoneTrail {
       for (int j = 0; j < trails[0].length; j++) {
         int val = (int)trails[i][j];
         if (val > 255) {
-          if (val > 510) {
-            val = 510;
+          if (val > 450) {
+            val = 450;
           }
           val -= 255;
           int amountBlue = 255 - val;

@@ -16,5 +16,5 @@ void setup() {
 
 void draw() {
   swarm.makeMove();
-  delay(100);
+  //delay(100);
 }
