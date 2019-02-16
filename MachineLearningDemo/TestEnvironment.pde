@@ -87,9 +87,8 @@ public class TestEnvironment {
     for (int i = 0; i < env.length; i++) {
       for (int j = 0; j < env[0].length; j++) {
         if (env[i][j].equals("Open")) {
-          //fill(255);
-          //stroke(255);
-          continue;
+          fill(255);
+          stroke(255);
         }
         else if (env[i][j].equals("Wall")) {
           fill(0);

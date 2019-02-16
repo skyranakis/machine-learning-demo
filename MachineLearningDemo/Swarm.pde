@@ -11,7 +11,7 @@ public class Swarm {
   private SwarmMember[] members;
   
   public Swarm(TestEnvironment env, int seed) {
-    NUM_MEMBERS = 400;
+    NUM_MEMBERS = 100;
     RELEASE_FREQUENCY = 5;
     
     currentlyOut = 1;
@@ -26,6 +26,7 @@ public class Swarm {
   }
   
   public void makeMove(){
+    testEnv.drawEnvironment();
     pher.drawPheromones();
     for (int i = 0; i < currentlyOut; i++) {
       members[i].takeTurn();
@@ -40,7 +41,6 @@ public class Swarm {
       }
     }
     pher.decayPheromones();
-    testEnv.drawEnvironment();
   }
   
 }

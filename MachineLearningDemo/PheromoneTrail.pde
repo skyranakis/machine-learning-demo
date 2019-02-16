@@ -39,6 +39,9 @@ public class PheromoneTrail {
   public void drawPheromones() {
     for (int i = 0; i < trails.length; i++) {
       for (int j = 0; j < trails[0].length; j++) {
+        if (get(i * SQUARE_SIZE + 1, j * SQUARE_SIZE + 1) != color(255)) {
+          continue;
+        }
         int val = (int)trails[i][j];
         if (val > 255) {
           if (val > 450) {

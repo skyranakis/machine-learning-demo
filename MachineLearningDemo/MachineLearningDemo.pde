@@ -1,7 +1,7 @@
 import java.util.Random;
 import java.lang.Math;
 
-final int SQUARE_SIZE = 10;
+final int SQUARE_SIZE = 20;
 final int SEED = 0;
 TestEnvironment testEnv;
 Swarm swarm;

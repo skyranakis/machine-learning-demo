@@ -21,10 +21,10 @@ public class SwarmMember {
   public SwarmMember(int[] pos, TestEnvironment env, PheromoneTrail pherTrail, Random r) {
     name = "test";
     
-    LOOK_AHEAD_AMOUNT = 7;
+    LOOK_AHEAD_AMOUNT = 3;
     HUNGRY_TRAIL = 0;
     FULL_TRAIL = 100;
-    FULL_WEAR_OFF = 0.999;
+    FULL_WEAR_OFF = 0.99;
     SQUARE_SIZE = env.getSquareSize();
     HUNGRY_EXPLORATION = 0.2;
     FULL_EXPLORATION = 0.8;
