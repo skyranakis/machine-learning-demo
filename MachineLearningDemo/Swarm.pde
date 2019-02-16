@@ -8,7 +8,7 @@ public class Swarm {
   private SwarmMember[] members;
   
   public Swarm(TestEnvironment env, int seed) {
-    NUM_MEMBERS = 20;
+    NUM_MEMBERS = 2;
     SEED = seed;
     pher = new PheromoneTrail(SQUARE_SIZE);
     testEnv = env;
@@ -19,10 +19,10 @@ public class Swarm {
   }
   
   public void makeMove(){
+    pher.drawPheromones();
     for (int i = 0; i < NUM_MEMBERS; i++) {
       members[i].takeTurn();
     }
-    pher.drawPheromones();
     pher.decayPheromones();
     testEnv.drawEnvironment();
   }

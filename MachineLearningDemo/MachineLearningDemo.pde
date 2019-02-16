@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.lang.Math;
 
 final int SQUARE_SIZE = 20;
 final int SEED = 0;
@@ -15,5 +16,5 @@ void setup() {
 
 void draw() {
   swarm.makeMove();
-  delay(500);
+  delay(50);
 }

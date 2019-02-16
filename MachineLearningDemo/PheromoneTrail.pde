@@ -6,13 +6,13 @@ public class PheromoneTrail {
   
   public PheromoneTrail(int size) {
     SQUARE_SIZE = size;
-    DECAY_AMOUNT = 0.98;
+    DECAY_AMOUNT = 0.9995;
     int numHoriz = width/SQUARE_SIZE;
     int numVert = height/SQUARE_SIZE;
     trails = new double[numHoriz][numVert];
     for (int i = 0; i < trails.length; i++) {
       for (int j = 0; j < trails[0].length; j++) {
-        trails[i][j] = 0;
+        trails[i][j] = 100;
       }
     }
   }
