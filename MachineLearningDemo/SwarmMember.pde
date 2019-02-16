@@ -1,5 +1,7 @@
 public class SwarmMember {
   
+  public String name;
+  
   private final int LOOK_AHEAD_AMOUNT;
   private final int HUNGRY_TRAIL;
   private final int FULL_TRAIL;
@@ -9,22 +11,26 @@ public class SwarmMember {
   
   private boolean full;
   private double trailAmount;
-  private int[] position;
+  public int[] position;
   private TestEnvironment testEnv;
   private PheromoneTrail pher;
   private Random rand;
   
   public SwarmMember(int[] pos, TestEnvironment env, PheromoneTrail pherTrail, Random r) {
+    name = "test";
+    
     LOOK_AHEAD_AMOUNT = 3;
     HUNGRY_TRAIL = 10;
     FULL_TRAIL = 100;
     FULL_WEAR_OFF = 0.9;
     SQUARE_SIZE = env.getSquareSize();
-    EXPLORATION_RATE = 0.3;
+    EXPLORATION_RATE = 0.5;
     
     full = false;
     trailAmount = HUNGRY_TRAIL;
-    position = pos;
+    position = new int[2];
+    position[0] = pos[0];
+    position[1] = pos[1];
     testEnv = env;
     pher = pherTrail;
     rand = r;
@@ -51,7 +57,7 @@ public class SwarmMember {
     }
   }
   
-  public void move() {
+  private void move() {
     double upVal = 0;
     for (int i = 1; i <= LOOK_AHEAD_AMOUNT; i++) {
       upVal += pher.getPheromone(position[0], position[1] - i);
@@ -85,7 +91,7 @@ public class SwarmMember {
     }
   }
   
-  public int[] explore() {
+  private int[] explore() {
     int[] target = new int[2];
     double decider = rand.nextDouble();
     if (decider < 0.25) {
@@ -107,7 +113,7 @@ public class SwarmMember {
     return target;
   }
   
-  public int[] exploit(double upVal, double downVal, double leftVal, double rightVal) {
+  private int[] exploit(double upVal, double downVal, double leftVal, double rightVal) {
     double total = upVal + downVal + leftVal + rightVal;
     int[] target = new int[2];
     double decider = rand.nextDouble() * total;
@@ -130,7 +136,7 @@ public class SwarmMember {
     return target;
   }
   
-  public void drawMember() {
+  private void drawMember() {
     stroke(100, 100, 100);
     fill(100, 100, 100);
     rect(position[0] * SQUARE_SIZE, position[1] * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);

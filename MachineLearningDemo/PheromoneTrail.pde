@@ -6,7 +6,7 @@ public class PheromoneTrail {
   
   public PheromoneTrail(int size) {
     SQUARE_SIZE = size;
-    DECAY_AMOUNT = 0.9995;
+    DECAY_AMOUNT = 0.95;
     int numHoriz = width/SQUARE_SIZE;
     int numVert = height/SQUARE_SIZE;
     trails = new double[numHoriz][numVert];
