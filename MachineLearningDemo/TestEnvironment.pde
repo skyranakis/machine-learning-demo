@@ -35,17 +35,17 @@ public class TestEnvironment {
     startPosition[0] = 1;
     startPosition[1] = env[0].length-2;
     
-    //env[env.length-2][1] = "Goal";
-    //goalPosition[0] = env.length-2;
-    //goalPosition[1] = 1;
+    env[env.length-2][1] = "Goal";
+    goalPosition[0] = env.length-2;
+    goalPosition[1] = 1;
     
     //env[15][25] = "Goal";
     //goalPosition[0] = 15;
     //goalPosition[1] = 25;
     
-    env[35][10] = "Goal";
-    goalPosition[0] = 35;
-    goalPosition[1] = 10;
+    //env[35][10] = "Goal";
+    //goalPosition[0] = 35;
+    //goalPosition[1] = 10;
     
     //env[20][25] = "Goal";
     //goalPosition[0] = 20;
@@ -87,8 +87,9 @@ public class TestEnvironment {
     for (int i = 0; i < env.length; i++) {
       for (int j = 0; j < env[0].length; j++) {
         if (env[i][j].equals("Open")) {
-          fill(255);
-          stroke(255);
+          //fill(255);
+          //stroke(255);
+          continue;
         }
         else if (env[i][j].equals("Wall")) {
           fill(0);

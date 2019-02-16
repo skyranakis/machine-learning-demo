@@ -22,12 +22,12 @@ public class SwarmMember {
     name = "test";
     
     LOOK_AHEAD_AMOUNT = 3;
-    HUNGRY_TRAIL = 1;
+    HUNGRY_TRAIL = 0;
     FULL_TRAIL = 100;
-    FULL_WEAR_OFF = 0.9;
+    FULL_WEAR_OFF = 0.99;
     SQUARE_SIZE = env.getSquareSize();
     HUNGRY_EXPLORATION = 0.2;
-    FULL_EXPLORATION = 1;
+    FULL_EXPLORATION = 0.8;
     
     full = false;
     trailAmount = HUNGRY_TRAIL;

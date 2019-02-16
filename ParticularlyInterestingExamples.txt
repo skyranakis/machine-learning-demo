@@ -1,0 +1,12 @@
+Swarm Intelligencen (before redesigned to facilitate transport from start to goal, just congregate at goal)
+	SQUARE_SIZE = 20
+	SEED = 0
+	DECAY_AMOUNT = 0.995
+	NUM_MEMBERS = 100
+	RELEASE_FREQUENCY = 5
+	 LOOK_AHEAD_AMOUNT = 3
+	HUNGRY_TRAIL = 0
+	FULL_TRAIL = 100
+    	FULL_WEAR_OFF = 0.99
+    	HUNGRY_EXPLORATION = 0.2
+    	FULL_EXPLORATION = 0.8
