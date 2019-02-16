@@ -11,9 +11,12 @@ public class SwarmMember {
   private final double FULL_EXPLORATION;
   
   private boolean full;
+  private boolean lastAtStart;
+  private boolean lastAtGoal;
   private double trailAmount;
   private double explorationRate;
   public int[] position;
+  
   private TestEnvironment testEnv;
   private PheromoneTrail pher;
   private Random rand;
@@ -30,12 +33,14 @@ public class SwarmMember {
     FULL_EXPLORATION = 0.8;
     
     full = false;
+    lastAtStart = true;
+    lastAtGoal = false;
     trailAmount = HUNGRY_TRAIL;
     explorationRate = HUNGRY_EXPLORATION;
-    
     position = new int[2];
     position[0] = pos[0];
     position[1] = pos[1];
+    
     testEnv = env;
     pher = pherTrail;
     rand = r;
@@ -136,11 +141,22 @@ public class SwarmMember {
         explorationRate = HUNGRY_EXPLORATION;
       }
     }
-    if (testEnv.getReward(position[0], position[1]) > 0) {
-      full = true;
-      trailAmount = FULL_TRAIL;
-      explorationRate = FULL_EXPLORATION;
+    if (testEnv.getReward(position[0], position[1]) > 0 && lastAtStart) {
+      makeFull();
+      lastAtStart = false;
+      lastAtGoal = true;
     }
+    if (testEnv.getStartPosition()[0] == position[0] && testEnv.getStartPosition()[1] == position[1] && lastAtGoal) {
+      makeFull();
+      lastAtStart = true;
+      lastAtGoal = false;
+    }
+  }
+  
+  private void makeFull() {
+    full = true;
+    trailAmount = FULL_TRAIL;
+    explorationRate = FULL_EXPLORATION;
   }
   
   private void drawMember() {
