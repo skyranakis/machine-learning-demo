@@ -5,6 +5,7 @@ final int SQUARE_SIZE = 50;
 final int SEED = 0;
 TestEnvironment testEnv;
 Swarm swarm;
+Genetic genetic;
 
 void setup() {
   size(800, 600);
@@ -12,9 +13,12 @@ void setup() {
   fill(0);
   testEnv = new TestEnvironment(SQUARE_SIZE);
   swarm = new Swarm(testEnv, SEED);
+  genetic = new Genetic(testEnv);
 }
 
 void draw() {
-  swarm.makeMove();
+  genetic.makeMove();
+  delay(50);
+  //swarm.makeMove();
   //delay(100);
 }
