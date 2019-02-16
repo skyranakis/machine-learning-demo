@@ -1,19 +1,16 @@
-int SQUARE_SIZE;
+final int SQUARE_SIZE = 20;
 TestEnvironment testEnv;
-PheromoneTrail pher;
+Swarm swarm;
 
 void setup() {
   size(800, 600);
   background(255);
   fill(0);
-  SQUARE_SIZE = 20;
   testEnv = new TestEnvironment(SQUARE_SIZE);
-  pher = new PheromoneTrail(SQUARE_SIZE);
+  swarm = new Swarm(SQUARE_SIZE, testEnv);
 }
 
 void draw() {
+  swarm.makeMove();
   delay(50);
-  pher.drawPheromones();
-  pher.decayPheromones();
-  testEnv.drawEnvironment();
 }

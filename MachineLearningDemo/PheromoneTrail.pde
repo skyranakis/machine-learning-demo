@@ -1,7 +1,7 @@
 public class PheromoneTrail {
   
-  private int SQUARE_SIZE;
-  private double DECAY_AMOUNT;
+  private final int SQUARE_SIZE;
+  private final double DECAY_AMOUNT;
   private double[][] trails;
   
   public PheromoneTrail(int size) {

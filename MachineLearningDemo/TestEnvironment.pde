@@ -1,8 +1,9 @@
 public class TestEnvironment {
   
-  String[][] env;
-  int SQUARE_SIZE;
-  int[] startPosition;
+  private String[][] env;
+  private final int SQUARE_SIZE;
+  private int[] startPosition;
+  private int[] goalPosition;
   
   public TestEnvironment(int size) {
     SQUARE_SIZE = size;
@@ -29,10 +30,13 @@ public class TestEnvironment {
       env[i][20] = "Wall";
     }
     
-    env[env.length-2][1] = "Goal";
     env[1][env[0].length-2] = "Start";
     startPosition[0] = 1;
     startPosition[1] = env[0].length-2;
+    
+    env[env.length-2][1] = "Goal";
+    goalPosition[0] = env.length-2;
+    goalPosition[1] = 1;
   }
   
   public boolean isEnterable(int r, int c) {
@@ -55,6 +59,10 @@ public class TestEnvironment {
   
   public int[] getStartPosition() {
     return startPosition;
+  }
+  
+  public int[] getGoalPosition() {
+    return goalPosition;
   }
   
   public int getSquareSize() {
