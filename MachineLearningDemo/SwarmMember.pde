@@ -1,7 +1,5 @@
 public class SwarmMember {
   
-  public String name;
-  
   private final int LOOK_AHEAD_AMOUNT;
   private final double HUNGRY_TRAIL;
   private final double FULL_TRAIL;
@@ -9,20 +7,20 @@ public class SwarmMember {
   private final int SQUARE_SIZE;
   private final double HUNGRY_EXPLORATION;
   private final double FULL_EXPLORATION;
+  private final boolean FIND_PATHWAY;
   
   private boolean full;
   private boolean lastAtStart;
   private boolean lastAtGoal;
   private double trailAmount;
   private double explorationRate;
-  public int[] position;
+  private int[] position;
   
   private TestEnvironment testEnv;
   private PheromoneTrail pher;
   private Random rand;
   
-  public SwarmMember(int[] pos, TestEnvironment env, PheromoneTrail pherTrail, Random r) {
-    name = "test";
+  public SwarmMember(int[] pos, TestEnvironment env, PheromoneTrail pherTrail, Random r, boolean pathway) {
     
     LOOK_AHEAD_AMOUNT = 3;
     HUNGRY_TRAIL = 0;
@@ -31,6 +29,7 @@ public class SwarmMember {
     SQUARE_SIZE = env.getSquareSize();
     HUNGRY_EXPLORATION = 0.2;
     FULL_EXPLORATION = 0.8;
+    FIND_PATHWAY = pathway;
     
     full = false;
     lastAtStart = true;
@@ -141,12 +140,17 @@ public class SwarmMember {
         explorationRate = HUNGRY_EXPLORATION;
       }
     }
-    if (testEnv.getReward(position[0], position[1]) > 0 && lastAtStart) {
+    if (testEnv.getReward(position[0], position[1]) > 0 && !FIND_PATHWAY) {
       makeFull();
       lastAtStart = false;
       lastAtGoal = true;
     }
-    if (testEnv.getStartPosition()[0] == position[0] && testEnv.getStartPosition()[1] == position[1] && lastAtGoal) {
+    else if (testEnv.getReward(position[0], position[1]) > 0 && lastAtStart) {
+      makeFull();
+      lastAtStart = false;
+      lastAtGoal = true;
+    }
+    else if (testEnv.getStartPosition()[0] == position[0] && testEnv.getStartPosition()[1] == position[1] && lastAtGoal) {
       makeFull();
       lastAtStart = true;
       lastAtGoal = false;

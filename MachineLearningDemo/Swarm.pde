@@ -2,6 +2,7 @@ public class Swarm {
   
   private final int NUM_MEMBERS;
   private final int RELEASE_FREQUENCY;
+  private final boolean FIND_PATHWAY;
   
   private int currentlyOut;
   private int timeUntilNext;
@@ -11,8 +12,9 @@ public class Swarm {
   private SwarmMember[] members;
   
   public Swarm(TestEnvironment env, int seed) {
-    NUM_MEMBERS = 10;
+    NUM_MEMBERS = 100;
     RELEASE_FREQUENCY = 5;
+    FIND_PATHWAY = false;
     
     currentlyOut = 1;
     timeUntilNext = RELEASE_FREQUENCY;
@@ -21,7 +23,7 @@ public class Swarm {
     testEnv = env;
     members = new SwarmMember[NUM_MEMBERS];
     for (int i = 0; i < NUM_MEMBERS; i++) {
-      members[i] = new SwarmMember(env.getStartPosition(), env, pher, new Random(seed + i));
+      members[i] = new SwarmMember(env.getStartPosition(), env, pher, new Random(seed + i), FIND_PATHWAY);
     }
   }
   
