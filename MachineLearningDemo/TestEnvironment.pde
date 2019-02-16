@@ -8,6 +8,7 @@ public class TestEnvironment {
   public TestEnvironment(int size) {
     SQUARE_SIZE = size;
     startPosition = new int[2];
+    goalPosition = new int[2];
     int numHoriz = width/SQUARE_SIZE;
     int numVert = height/SQUARE_SIZE;
     env = new String[numHoriz][numVert];

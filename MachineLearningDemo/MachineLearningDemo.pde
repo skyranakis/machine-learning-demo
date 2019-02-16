@@ -1,4 +1,7 @@
+import java.util.Random;
+
 final int SQUARE_SIZE = 20;
+final int SEED = 0;
 TestEnvironment testEnv;
 Swarm swarm;
 
@@ -7,10 +10,10 @@ void setup() {
   background(255);
   fill(0);
   testEnv = new TestEnvironment(SQUARE_SIZE);
-  swarm = new Swarm(SQUARE_SIZE, testEnv);
+  swarm = new Swarm(testEnv, SEED);
 }
 
 void draw() {
   swarm.makeMove();
-  delay(50);
+  delay(500);
 }

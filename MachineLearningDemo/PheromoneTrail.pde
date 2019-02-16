@@ -12,12 +12,15 @@ public class PheromoneTrail {
     trails = new double[numHoriz][numVert];
     for (int i = 0; i < trails.length; i++) {
       for (int j = 0; j < trails[0].length; j++) {
-        trails[i][j] = 8*(i + j);
+        trails[i][j] = 0;
       }
     }
   }
   
-  public double getPhermone(int r, int c) {
+  public double getPheromone(int r, int c) {
+    if (r < 0 || c < 0 || r >= trails.length || c >= trails[0].length) {
+      return 0;
+    }
     return trails[r][c];
   }
   
