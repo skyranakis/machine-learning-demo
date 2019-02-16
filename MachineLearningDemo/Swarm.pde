@@ -11,7 +11,7 @@ public class Swarm {
   private SwarmMember[] members;
   
   public Swarm(TestEnvironment env, int seed) {
-    NUM_MEMBERS = 100;
+    NUM_MEMBERS = 400;
     RELEASE_FREQUENCY = 5;
     
     currentlyOut = 1;

@@ -3,8 +3,8 @@ public class SwarmMember {
   public String name;
   
   private final int LOOK_AHEAD_AMOUNT;
-  private final int HUNGRY_TRAIL;
-  private final int FULL_TRAIL;
+  private final double HUNGRY_TRAIL;
+  private final double FULL_TRAIL;
   private final double FULL_WEAR_OFF;
   private final int SQUARE_SIZE;
   private final double HUNGRY_EXPLORATION;
@@ -21,10 +21,10 @@ public class SwarmMember {
   public SwarmMember(int[] pos, TestEnvironment env, PheromoneTrail pherTrail, Random r) {
     name = "test";
     
-    LOOK_AHEAD_AMOUNT = 3;
+    LOOK_AHEAD_AMOUNT = 7;
     HUNGRY_TRAIL = 0;
     FULL_TRAIL = 100;
-    FULL_WEAR_OFF = 0.99;
+    FULL_WEAR_OFF = 0.999;
     SQUARE_SIZE = env.getSquareSize();
     HUNGRY_EXPLORATION = 0.2;
     FULL_EXPLORATION = 0.8;
