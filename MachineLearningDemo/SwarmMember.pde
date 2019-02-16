@@ -54,19 +54,19 @@ public class SwarmMember {
   private void move() {
     double upVal = 0;
     for (int i = 1; i <= LOOK_AHEAD_AMOUNT; i++) {
-      upVal += pher.getPheromone(position[0], position[1] - i);
+      upVal += pher.getPheromone(position[0], position[1] - i)[0];
     }
     double downVal = 0;
     for (int i = 1; i <= LOOK_AHEAD_AMOUNT; i++) {
-      downVal += pher.getPheromone(position[0], position[1] + i);
+      downVal += pher.getPheromone(position[0], position[1] + i)[0];
     }
     double leftVal = 0;
     for (int i = 1; i <= LOOK_AHEAD_AMOUNT; i++) {
-      leftVal += pher.getPheromone(position[0] - i, position[1]);
+      leftVal += pher.getPheromone(position[0] - i, position[1])[0];
     }
     double rightVal = 0;
     for (int i = 1; i <= LOOK_AHEAD_AMOUNT; i++) {
-      rightVal += pher.getPheromone(position[0] + i, position[1]);
+      rightVal += pher.getPheromone(position[0] + i, position[1])[0];
     }
     
     int[] target = new int[2];
@@ -109,6 +109,9 @@ public class SwarmMember {
   
   private int[] exploit(double upVal, double downVal, double leftVal, double rightVal) {
     double total = upVal + downVal + leftVal + rightVal;
+    if (total == 0) {
+      return explore();
+    }
     int[] target = new int[2];
     double decider = rand.nextDouble() * total;
     if (decider < upVal) {
@@ -131,7 +134,8 @@ public class SwarmMember {
   }
   
   private void handlePheromoneTrail() {
-    pher.putPheromone(position[0], position[1], trailAmount);
+    double[] pherDeposit = {trailAmount, 0};
+    pher.putPheromone(position[0], position[1], pherDeposit);
     if (full) {
       trailAmount *= FULL_WEAR_OFF;
       if (trailAmount <= HUNGRY_TRAIL) {

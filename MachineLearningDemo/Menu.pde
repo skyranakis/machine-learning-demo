@@ -7,7 +7,7 @@ public class Menu {
   private int timeSinceSelected;
   
   public Menu() {
-    TIME_UNTIL_SWITCH = 5;
+    TIME_UNTIL_SWITCH = 1;
     
     swarmSelected = false;
     geneticSelected = false;

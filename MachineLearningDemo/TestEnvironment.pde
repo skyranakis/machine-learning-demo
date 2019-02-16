@@ -99,8 +99,8 @@ public class TestEnvironment {
           stroke(0, 255, 0);
         }
         else if (env[i][j].equals("Start")) {
-          fill(255, 0, 0);
-          stroke(255, 0, 0);
+          fill(255, 255, 0);
+          stroke(255, 255, 0);
         }
         rect(i*SQUARE_SIZE, j*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
       }
