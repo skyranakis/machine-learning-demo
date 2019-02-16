@@ -5,10 +5,11 @@ public class SwarmMember {
   private final double FULL_TRAIL;
   private final double FULL_WEAR_OFF;
   private final int SQUARE_SIZE;
-  private final double HUNGRY_EXPLORATION;
-  private final double FULL_EXPLORATION;
   private final boolean FIND_PATHWAY;
+  private final double EXPLORE_DECAY;
   
+  private double hungryExploration;
+  private double fullExploration;
   private boolean full;
   private boolean lastAtStart;
   private boolean lastAtGoal;
@@ -16,6 +17,8 @@ public class SwarmMember {
   private double explorationRate;
   private int[] position;
   private int relevantIndex;
+  private int recordTime;
+  private int currentTime;
   
   private TestEnvironment testEnv;
   private PheromoneTrail pher;
@@ -28,19 +31,22 @@ public class SwarmMember {
     FULL_TRAIL = 100;
     FULL_WEAR_OFF = 0.99;
     SQUARE_SIZE = env.getSquareSize();
-    HUNGRY_EXPLORATION = 0.4;
-    FULL_EXPLORATION = 0.2;
     FIND_PATHWAY = pathway;
+    EXPLORE_DECAY = 0.8;
     
+    hungryExploration = 0.4;
+    fullExploration = 0.2;
     full = FIND_PATHWAY;
     lastAtStart = true;
     lastAtGoal = false;
     trailAmount = (FIND_PATHWAY) ? FULL_TRAIL : HUNGRY_TRAIL;
-    explorationRate = (FIND_PATHWAY) ? FULL_EXPLORATION : HUNGRY_EXPLORATION;
+    explorationRate = (FIND_PATHWAY) ? fullExploration : hungryExploration;
     position = new int[2];
     position[0] = pos[0];
     position[1] = pos[1];
     relevantIndex = 0;
+    recordTime = MAX_INT;
+    currentTime = 0;
     
     testEnv = env;
     pher = pherTrail;
@@ -69,6 +75,7 @@ public class SwarmMember {
       position[0] = target[0];
       position[1] = target[1];
     }
+    currentTime++;
   }
   
   private int[] explore() {
@@ -155,7 +162,7 @@ public class SwarmMember {
       if (trailAmount <= HUNGRY_TRAIL) {
         full = false;
         trailAmount = HUNGRY_TRAIL;
-        explorationRate = HUNGRY_EXPLORATION;
+        explorationRate = hungryExploration;
       }
     }
     
@@ -164,13 +171,13 @@ public class SwarmMember {
       makeFull();
     }
     else if (testEnv.getReward(position[0], position[1]) > 0 && lastAtStart && FIND_PATHWAY) {
-      makeFull();
+      hitEndpoint();
       lastAtStart = false;
       lastAtGoal = true;
       relevantIndex = 1;
     }
     else if (start[0] == position[0] && start[1] == position[1] && lastAtGoal && FIND_PATHWAY) {
-      makeFull();
+      hitEndpoint();
       lastAtStart = true;
       lastAtGoal = false;
       relevantIndex = 0;
@@ -178,10 +185,20 @@ public class SwarmMember {
     
   }
   
+  private void hitEndpoint() {
+    makeFull();
+    if (currentTime <= recordTime) {
+      recordTime = currentTime;
+    }
+    currentTime = 0;
+    hungryExploration *= EXPLORE_DECAY;
+    fullExploration *= EXPLORE_DECAY;
+  }
+  
   private void makeFull() {
     full = true;
     trailAmount = FULL_TRAIL;
-    explorationRate = FULL_EXPLORATION;
+    explorationRate = fullExploration;
   }
   
   private void drawMember() {
