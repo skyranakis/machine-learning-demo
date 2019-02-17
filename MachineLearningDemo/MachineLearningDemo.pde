@@ -2,7 +2,7 @@ import java.util.Random;
 import java.lang.Math;
 import java.util.ArrayList;
 
-final int SQUARE_SIZE = 50;
+final int SQUARE_SIZE = 1;
 final int SEED = 0;
 
 boolean menuOn;

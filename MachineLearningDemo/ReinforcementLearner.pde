@@ -43,7 +43,7 @@ public class ReinforcementLearner {
     RECENT_PUNISHMENT = -20;
     EXPLORATION_DECAY = 0.9;
     HISTORY_DECAY = 0.9;
-    NUM_PREVIOUS_USED = 5;
+    NUM_PREVIOUS_USED = 1;
     
     rewardScaler = 0.2;
     position = new int[2];
@@ -103,10 +103,10 @@ public class ReinforcementLearner {
     move(target);
     checkForAndHandleGoal(direction);
     drawAgent();
-    //print("Down after Up: " + previousDirectionWeights[0][0][1] + "\n");
-    //print("Up after Down: " + previousDirectionWeights[0][1][0] + "\n");
-    //print("Right after Left: " + previousDirectionWeights[0][2][3] + "\n");
-    //print("Left after Right: " + previousDirectionWeights[0][3][2] + "\n\n");
+    print("Down after Up: " + previousDirectionWeights[0][0][1] + "\n");
+    print("Up after Down: " + previousDirectionWeights[0][1][0] + "\n");
+    print("Right after Left: " + previousDirectionWeights[0][2][3] + "\n");
+    print("Left after Right: " + previousDirectionWeights[0][3][2] + "\n\n");
   }
   
   private int[] explore() {
@@ -159,15 +159,15 @@ public class ReinforcementLearner {
       }
     }
     
-    //for (int i = 0; i < Math.min(NUM_PREVIOUS_USED, historicDirections.size()); i++) {
-    //  int direction = historicDirections.get(historicDirections.size() - 1 - i);
-    //  if (direction < 0) {
-    //    continue;
-    //  }
-    //  for (int k = 0; k < previousDirectionWeights[0][0].length; k++) {
-    //    directionValue[k] += previousDirectionWeights[i][direction][k];
-    //  }
-    //}
+    for (int i = 0; i < Math.min(NUM_PREVIOUS_USED, historicDirections.size()); i++) {
+      int direction = historicDirections.get(historicDirections.size() - 1 - i);
+      if (direction < 0) {
+        continue;
+      }
+      for (int k = 0; k < previousDirectionWeights[0][0].length; k++) {
+        directionValue[k] += previousDirectionWeights[i][direction][k];
+      }
+    }
     
     int maxInd = 0;
     for (int i = 1; i < directionValue.length; i++) {
@@ -215,6 +215,9 @@ public class ReinforcementLearner {
       for (int i = 0; i < recent.length; i++) {
         if (target[0] == recent[i][0] && target[1] == recent[i][1]) {
           punishmentFromRecent += RECENT_PUNISHMENT;
+          for (int n = 0; n <200; n++) {
+            print("*");
+          }
         }
       }
     }
@@ -267,13 +270,16 @@ public class ReinforcementLearner {
       }
     }
     
-    //for (int i = howFarBack; i < Math.min(NUM_PREVIOUS_USED, historicDirections.size()); i++) {
-    //  int dir = historicDirections.get(historicDirections.size() - 1 - i);
-    //  if (dir < 0) {
-    //    continue;
-    //  }
-    //  previousDirectionWeights[i][dir][direction] += (reward * rewardScaler);
-    //}
+    for (int i = howFarBack; i < Math.min(NUM_PREVIOUS_USED, historicDirections.size()); i++) {
+      int dir = historicDirections.get(historicDirections.size() - 1 - i);
+      if (dir < 0) {
+        continue;
+      }
+      if (i == 0 && dir == 1 && direction == 0) {
+        print(reward * rewardScaler + "\n");
+      }
+      previousDirectionWeights[i][dir][direction] += (reward * rewardScaler);
+    }
     
   }
   

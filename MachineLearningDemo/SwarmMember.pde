@@ -29,7 +29,7 @@ public class SwarmMember {
     LOOK_AHEAD_AMOUNT = 1;
     HUNGRY_TRAIL = 0;
     FULL_TRAIL = 100;
-    FULL_WEAR_OFF = 0.99;
+    FULL_WEAR_OFF = 0.99999; //0.99;
     SQUARE_SIZE = env.getSquareSize();
     FIND_PATHWAY = pathway;
     EXPLORE_DECAY = 0.8;
@@ -56,7 +56,7 @@ public class SwarmMember {
   public void takeTurn() {
     move();
     handlePheromoneTrail();
-    drawMember();
+    //drawMember();
   }
   
   private void move() {

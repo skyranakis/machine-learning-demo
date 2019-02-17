@@ -26,14 +26,26 @@ public class TestEnvironment {
       env[0][i] = "Wall";
       env[env.length-1][i] = "Wall";
     }
-    for (int i = 4; i < env.length-4; i++) {
+    for (int i = (int)(env.length / 10); i < (int)(env.length * 0.9); i++) {
       env[i][(int)(env[0].length/3)] = "Wall";
+      env[i][(int)(env[0].length/3)+1] = "Wall";
+      env[i][(int)(env[0].length/3)+2] = "Wall";
+      env[i][(int)(env[0].length/3)+3] = "Wall";
+      env[i][(int)(env[0].length/3)+4] = "Wall";
     }
-    for (int i = 4; i < env.length; i++) {
+    for (int i = (int)(env.length / 10); i < env.length; i++) {
       env[i][(int)(2*env[0].length/3)] = "Wall";
+      env[i][(int)(2*env[0].length/3)+1] = "Wall";
+      env[i][(int)(2*env[0].length/3)+2] = "Wall";
+      env[i][(int)(2*env[0].length/3)+3] = "Wall";
+      env[i][(int)(2*env[0].length/3)+4] = "Wall";
     }
     for (int i = 1; i < (int)(env[0].length/3); i++) {
       env[(int)(3 * env.length/8)][i] = "Wall";
+      env[(int)(3 * env.length/8)+1][i] = "Wall";
+      env[(int)(3 * env.length/8)+2][i] = "Wall";
+      env[(int)(3 * env.length/8)+3][i] = "Wall";
+      env[(int)(3 * env.length/8)+4][i] = "Wall";
     }
     
     env[1][env[0].length-2] = "Start";
