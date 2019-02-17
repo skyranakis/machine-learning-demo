@@ -1,6 +1,6 @@
 import java.util.Random;
 import java.lang.Math;
-import java.util.Map;
+import java.util.ArrayList;
 
 final int SQUARE_SIZE = 50;
 final int SEED = 0;

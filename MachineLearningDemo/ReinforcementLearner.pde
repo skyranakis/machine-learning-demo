@@ -4,15 +4,16 @@ public class ReinforcementLearner {
   private final int SQUARE_SIZE;
   private final int[] START;
   private final double INITIAL_PUNISHMENT_FROM_TIME;
-  private final int AMOUNT_OF_HISTORY;
-  private final double HISTORY_PUNISHMENT;
+  private final int AMOUNT_OF_RECENT;
+  private final double RECENT_PUNISHMENT;
   private final double EXPLORATION_DECAY;
+  private final double HISTORY_DECAY;
   
   private double rewardScaler;
   private int[] position;
   private boolean shouldReset;
   private int timeTaken;
-  private int[][] history;
+  private int[][] recent;
   private double exploration;
   private int recordTime;
   
@@ -22,18 +23,22 @@ public class ReinforcementLearner {
   //Fourth layer: actual weight for the move types: 0 => "Up"  1=> "Down"  2 => "Left"  3 => "Right"
   private double[][][][] weights;
   
+  private ArrayList<int[]> historicPositions;
+  private ArrayList<Integer> historicDirections;
+  
   private Random rand;
   private TestEnvironment testEnv;
   
   public ReinforcementLearner(TestEnvironment env, int seed) {
-    SIGHT_DISTANCE = 3;
+    SIGHT_DISTANCE = 5;
     START = new int[2];
     START[0] = env.getStartPosition()[0];
     START[1] = env.getStartPosition()[1];
-    INITIAL_PUNISHMENT_FROM_TIME = -0.5;
-    AMOUNT_OF_HISTORY = 3;
-    HISTORY_PUNISHMENT = -0.5;
+    INITIAL_PUNISHMENT_FROM_TIME = -3;
+    AMOUNT_OF_RECENT = 3;
+    RECENT_PUNISHMENT = -20;
     EXPLORATION_DECAY = 0.9;
+    HISTORY_DECAY = 0.9;
     
     rewardScaler = 0.002;
     position = new int[2];
@@ -41,7 +46,7 @@ public class ReinforcementLearner {
     position[1] = START[1];
     shouldReset = false;
     timeTaken = 0;
-    history = new int[AMOUNT_OF_HISTORY][2];
+    recent = new int[AMOUNT_OF_RECENT][2];
     exploration = 0.5;
     recordTime = MAX_INT;
     
@@ -55,6 +60,9 @@ public class ReinforcementLearner {
         }
       }
     }
+    
+    historicPositions = new ArrayList<int[]>();
+    historicDirections = new ArrayList<Integer>();
     
     testEnv = env;
     SQUARE_SIZE = testEnv.getSquareSize();
@@ -81,6 +89,7 @@ public class ReinforcementLearner {
   
   private int[] explore() {
     int direction = (int)(rand.nextDouble()*4);
+    historicDirections.add(-1);    //Should be skipped by reward, since no decision was made
     return getTargetFromDirection(direction);
   }
   
@@ -88,14 +97,19 @@ public class ReinforcementLearner {
     if (testEnv.isEnterable(target[0], target[1])) {
       position[0] = target[0];
       position[1] = target[1];
-      for (int i = history.length - 2; i >= 0; i--) {
-        history[i + 1][0] = history[i][0];
-        history[i + 1][1] = history[i][1];
+      for (int i = recent.length - 2; i >= 0; i--) {
+        recent[i + 1][0] = recent[i][0];
+        recent[i + 1][1] = recent[i][1];
       }
-      history[0][0] = position[0];
-      history[0][1] = position[1];
+      recent[0][0] = position[0];
+      recent[0][1] = position[1];
     }
     timeTaken++;
+    int[] curPos = new int[2];
+    curPos[0] = position[0];
+    curPos[1] = position[1];
+    historicPositions.add(curPos);
+    
   }
   
   private int decide() {
@@ -129,6 +143,7 @@ public class ReinforcementLearner {
         maxInd = i;
       }
     }
+    historicDirections.add(maxInd);
     return maxInd;
   }
   
@@ -155,31 +170,46 @@ public class ReinforcementLearner {
   private double calculateReward(int[] target) {
     double rewardFromEnvironment = testEnv.getReward(target[0], target[1]);
     double punishmentFromTime = INITIAL_PUNISHMENT_FROM_TIME; //* Math.exp(-1 * timeTaken);
-    double punishmentFromHistory = 0;
+    double punishmentFromRecent = 0;
     if (!testEnv.isEnterable(target[0], target[1])) {
-      punishmentFromHistory += HISTORY_PUNISHMENT;
-      for (int i = 0; i < history.length; i++) {
-        if (position[0] == history[i][0] && position[1] == history[i][1]) {
-          punishmentFromHistory += HISTORY_PUNISHMENT;
+      punishmentFromRecent += RECENT_PUNISHMENT;
+      for (int i = 0; i < recent.length; i++) {
+        if (position[0] == recent[i][0] && position[1] == recent[i][1]) {
+          punishmentFromRecent += RECENT_PUNISHMENT;
         }
       }
     }
     else {
-      for (int i = 0; i < history.length; i++) {
-        if (target[0] == history[i][0] && target[1] == history[i][1]) {
-          punishmentFromHistory += HISTORY_PUNISHMENT;
+      for (int i = 0; i < recent.length; i++) {
+        if (target[0] == recent[i][0] && target[1] == recent[i][1]) {
+          punishmentFromRecent += RECENT_PUNISHMENT;
         }
       }
     }
-    double reward = rewardFromEnvironment + punishmentFromTime + punishmentFromHistory;
+    double reward = rewardFromEnvironment + punishmentFromTime + punishmentFromRecent;
     return reward;
   }
   
   private void reward(double reward, int direction) {
-    
+    rewardIndividualDecision(reward, direction, position);
+    for (int i = historicPositions.size() - 1; i >= 0; i--) {
+      int[] pos = historicPositions.get(i);
+      int[] safePos = new int[2];
+      safePos[0] = pos[0];
+      safePos[1] = pos[1];
+      int dir = historicDirections.get(i);
+      if (dir < 0) {
+        continue;
+      }
+      reward *= HISTORY_DECAY;
+      rewardIndividualDecision(reward, dir, safePos);
+    }
+  }
+  
+  private void rewardIndividualDecision(double reward, int direction, int[] pos) {
     for (int i = 0; i < weights.length; i++) {
       for (int j = 0; j < weights[0].length; j++) {
-        String s = testEnv.getType(i + position[0] - SIGHT_DISTANCE, j + position[1] - SIGHT_DISTANCE);
+        String s = testEnv.getType(i + pos[0] - SIGHT_DISTANCE, j + pos[1] - SIGHT_DISTANCE);
         int squareType = -1;
         if (s.equals("Open")) {
           squareType = 0;
@@ -212,6 +242,8 @@ public class ReinforcementLearner {
         exploration *= EXPLORATION_DECAY;
       }
       timeTaken = 0;
+      historicPositions = new ArrayList<int[]>();
+      historicDirections = new ArrayList<Integer>();
     }
   }
   
