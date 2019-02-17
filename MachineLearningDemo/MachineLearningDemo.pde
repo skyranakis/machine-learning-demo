@@ -30,7 +30,7 @@ void setup() {
   testEnv = new TestEnvironment(SQUARE_SIZE);
   swarm = new Swarm(testEnv, SEED);
   genetic = new Genetic(testEnv);
-  reinforcementLearner = new ReinforcementLearner(testEnv);
+  reinforcementLearner = new ReinforcementLearner(testEnv, SEED);
 }
 
 void draw() {
@@ -57,7 +57,7 @@ void draw() {
   }
   else if (reinforcementLearnerOn) {
     reinforcementLearner.makeMove();
-    delay(100);
+    //delay(100);
   }
 }
 

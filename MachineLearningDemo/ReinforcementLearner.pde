@@ -6,12 +6,15 @@ public class ReinforcementLearner {
   private final double INITIAL_PUNISHMENT_FROM_TIME;
   private final int AMOUNT_OF_HISTORY;
   private final double HISTORY_PUNISHMENT;
+  private final double EXPLORATION_DECAY;
   
   private double rewardScaler;
   private int[] position;
   private boolean shouldReset;
   private int timeTaken;
   private int[][] history;
+  private double exploration;
+  private int recordTime;
   
   //First layer: row in the environment
   //Second layer: column in the environment
@@ -19,16 +22,18 @@ public class ReinforcementLearner {
   //Fourth layer: actual weight for the move types: 0 => "Up"  1=> "Down"  2 => "Left"  3 => "Right"
   private double[][][][] weights;
   
+  private Random rand;
   private TestEnvironment testEnv;
   
-  public ReinforcementLearner(TestEnvironment env) {
-    SIGHT_DISTANCE = 1;
+  public ReinforcementLearner(TestEnvironment env, int seed) {
+    SIGHT_DISTANCE = 3;
     START = new int[2];
     START[0] = env.getStartPosition()[0];
     START[1] = env.getStartPosition()[1];
-    INITIAL_PUNISHMENT_FROM_TIME = -0.01;
+    INITIAL_PUNISHMENT_FROM_TIME = -0.5;
     AMOUNT_OF_HISTORY = 3;
     HISTORY_PUNISHMENT = -0.5;
+    EXPLORATION_DECAY = 0.9;
     
     rewardScaler = 0.002;
     position = new int[2];
@@ -37,6 +42,8 @@ public class ReinforcementLearner {
     shouldReset = false;
     timeTaken = 0;
     history = new int[AMOUNT_OF_HISTORY][2];
+    exploration = 0.5;
+    recordTime = MAX_INT;
     
     weights = new double[2 * SIGHT_DISTANCE + 1][2 * SIGHT_DISTANCE + 1][4][4];
     for (int i = 0; i < weights.length; i++) {
@@ -51,16 +58,44 @@ public class ReinforcementLearner {
     
     testEnv = env;
     SQUARE_SIZE = testEnv.getSquareSize();
+    rand = new Random(seed);
   }
   
   public void makeMove() {
     testEnv.drawEnvironment();
-    int direction = decide();
-    int[] target = getTargetFromDirection(direction);
-    double rew = calculateReward(target, direction);
-    reward(rew, direction);
+    int[] target;
+    double shouldExplore = rand.nextDouble();
+    if (shouldExplore < exploration) {
+      target = explore();
+    }
+    else {
+      int direction = decide();
+      target = getTargetFromDirection(direction);
+      double rew = calculateReward(target, direction);
+      reward(rew, direction);
+    }
     move(target);
+    checkForAndHandleGoal();
     drawAgent();
+  }
+  
+  private int[] explore() {
+    int direction = (int)(rand.nextDouble()*4);
+    return getTargetFromDirection(direction);
+  }
+  
+  private void move(int[] target) {
+    if (testEnv.isEnterable(target[0], target[1])) {
+      position[0] = target[0];
+      position[1] = target[1];
+      for (int i = history.length - 2; i >= 0; i--) {
+        history[i + 1][0] = history[i][0];
+        history[i + 1][1] = history[i][1];
+      }
+      history[0][0] = position[0];
+      history[0][1] = position[1];
+    }
+    timeTaken++;
   }
   
   private int decide() {
@@ -176,28 +211,19 @@ public class ReinforcementLearner {
     }
   }
   
-  private void move(int[] target) {
-    
-    if (testEnv.isEnterable(target[0], target[1])) {
-      position[0] = target[0];
-      position[1] = target[1];
-      for (int i = history.length - 2; i >= 0; i--) {
-        history[i + 1][0] = history[i][0];
-        history[i + 1][1] = history[i][1];
-      }
-      history[0][0] = position[0];
-      history[0][1] = position[1];
-    }
-    
+  private void checkForAndHandleGoal(){
     if (shouldReset) {
       shouldReset = false;
       position[0] = START[0];
       position[1] = START[1];
       delay(2000);
     }
-    timeTaken++;
-    if (testEnv.getType(target[0], target[1]).equals("Goal")) {
+    if (testEnv.getType(position[0], position[1]).equals("Goal")) {
       shouldReset = true;
+      if (timeTaken <= recordTime) {
+        recordTime = timeTaken;
+        exploration *= EXPLORATION_DECAY;
+      }
       timeTaken = 0;
     }
   }

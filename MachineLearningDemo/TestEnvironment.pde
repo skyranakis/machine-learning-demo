@@ -44,9 +44,13 @@ public class TestEnvironment {
     //goalPosition[0] = env.length-2;
     //goalPosition[1] = 1;
     
-    env[9][9] = "Goal";
-    goalPosition[0] = 9;
-    goalPosition[1] = 9;
+    //env[9][9] = "Goal";
+    //goalPosition[0] = 9;
+    //goalPosition[1] = 9;
+    
+    env[8][5] = "Goal";
+    goalPosition[0] = 8;
+    goalPosition[1] = 5;
   }
   
   public boolean isEnterable(int r, int c) {
