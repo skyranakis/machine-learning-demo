@@ -8,6 +8,7 @@ public class ReinforcementLearner {
   private final double RECENT_PUNISHMENT;
   private final double EXPLORATION_DECAY;
   private final double HISTORY_DECAY;
+  private final int NUM_PREVIOUS_USED;
   
   private double rewardScaler;
   private int[] position;
@@ -16,12 +17,15 @@ public class ReinforcementLearner {
   private int[][] recent;
   private double exploration;
   private int recordTime;
+  private int giveUpRatio;
+  private double giveUpPunishment;
   
   //First layer: row in the environment
   //Second layer: column in the environment
   //Third layer: type of square in environment: 0 => "Open"  1=> "Wall"  2 => "Start"  3 => "Goal"
   //Fourth layer: actual weight for the move types: 0 => "Up"  1=> "Down"  2 => "Left"  3 => "Right"
   private double[][][][] weights;
+  private int[][][] previousDirectionWeights;
   
   private ArrayList<int[]> historicPositions;
   private ArrayList<Integer> historicDirections;
@@ -39,8 +43,9 @@ public class ReinforcementLearner {
     RECENT_PUNISHMENT = -20;
     EXPLORATION_DECAY = 0.9;
     HISTORY_DECAY = 0.9;
+    NUM_PREVIOUS_USED = 5;
     
-    rewardScaler = 0.002;
+    rewardScaler = 0.2;
     position = new int[2];
     position[0] = START[0];
     position[1] = START[1];
@@ -49,14 +54,25 @@ public class ReinforcementLearner {
     recent = new int[AMOUNT_OF_RECENT][2];
     exploration = 0.5;
     recordTime = MAX_INT;
+    giveUpRatio = 5;
+    giveUpPunishment = -100;
     
     weights = new double[2 * SIGHT_DISTANCE + 1][2 * SIGHT_DISTANCE + 1][4][4];
     for (int i = 0; i < weights.length; i++) {
       for (int j = 0; j < weights[0].length; j++) {
         for (int k = 0; k < weights[0][0].length; k++) {
-          for (int n = 0; n < weights[0][0].length; n++) {
-            weights[i][j][k][n] = 1;
+          for (int n = 0; n < weights[0][0][0].length; n++) {
+            weights[i][j][k][n] = 0;
           }
+        }
+      }
+    }
+    
+    previousDirectionWeights = new int[NUM_PREVIOUS_USED][4][4];
+    for (int i = 0; i < previousDirectionWeights.length; i++) {
+      for (int j = 0; j < previousDirectionWeights[0].length; j++) {
+        for (int k = 0; k < previousDirectionWeights[0][0].length; k++) {
+          previousDirectionWeights[i][j][k] = 0;
         }
       }
     }
@@ -72,19 +88,25 @@ public class ReinforcementLearner {
   public void makeMove() {
     testEnv.drawEnvironment();
     int[] target;
+    int direction;
     double shouldExplore = rand.nextDouble();
     if (shouldExplore < exploration) {
       target = explore();
+      direction = -1;
     }
     else {
-      int direction = decide();
+      direction = decide();
       target = getTargetFromDirection(direction);
       double rew = calculateReward(target);
       reward(rew, direction);
     }
     move(target);
-    checkForAndHandleGoal();
+    checkForAndHandleGoal(direction);
     drawAgent();
+    //print("Down after Up: " + previousDirectionWeights[0][0][1] + "\n");
+    //print("Up after Down: " + previousDirectionWeights[0][1][0] + "\n");
+    //print("Right after Left: " + previousDirectionWeights[0][2][3] + "\n");
+    //print("Left after Right: " + previousDirectionWeights[0][3][2] + "\n\n");
   }
   
   private int[] explore() {
@@ -137,6 +159,16 @@ public class ReinforcementLearner {
       }
     }
     
+    //for (int i = 0; i < Math.min(NUM_PREVIOUS_USED, historicDirections.size()); i++) {
+    //  int direction = historicDirections.get(historicDirections.size() - 1 - i);
+    //  if (direction < 0) {
+    //    continue;
+    //  }
+    //  for (int k = 0; k < previousDirectionWeights[0][0].length; k++) {
+    //    directionValue[k] += previousDirectionWeights[i][direction][k];
+    //  }
+    //}
+    
     int maxInd = 0;
     for (int i = 1; i < directionValue.length; i++) {
       if (directionValue[i] > directionValue[maxInd]) {
@@ -186,12 +218,15 @@ public class ReinforcementLearner {
         }
       }
     }
+    //print(punishmentFromRecent + "\n");
     double reward = rewardFromEnvironment + punishmentFromTime + punishmentFromRecent;
     return reward;
   }
   
   private void reward(double reward, int direction) {
-    rewardIndividualDecision(reward, direction, position);
+    if (direction >= 0) {
+      rewardIndividualDecision(reward, direction, position, 0);
+    }
     for (int i = historicPositions.size() - 1; i >= 0; i--) {
       int[] pos = historicPositions.get(i);
       int[] safePos = new int[2];
@@ -202,11 +237,12 @@ public class ReinforcementLearner {
         continue;
       }
       reward *= HISTORY_DECAY;
-      rewardIndividualDecision(reward, dir, safePos);
+      rewardIndividualDecision(reward, dir, safePos, i);
     }
+    
   }
   
-  private void rewardIndividualDecision(double reward, int direction, int[] pos) {
+  private void rewardIndividualDecision(double reward, int direction, int[] pos, int howFarBack) {
     for (int i = 0; i < weights.length; i++) {
       for (int j = 0; j < weights[0].length; j++) {
         String s = testEnv.getType(i + pos[0] - SIGHT_DISTANCE, j + pos[1] - SIGHT_DISTANCE);
@@ -223,16 +259,32 @@ public class ReinforcementLearner {
         else if (s.equals("Goal")) {
           squareType = 3;
         }
-        weights[i][j][squareType][direction] += (reward * rewardScaler);
+        try {
+          weights[i][j][squareType][direction] += (reward * rewardScaler);
+        } catch (Exception e) {
+          print("Sqaure is " + s + "\tDirection is " + direction + "\n");
+        }
       }
     }
+    
+    //for (int i = howFarBack; i < Math.min(NUM_PREVIOUS_USED, historicDirections.size()); i++) {
+    //  int dir = historicDirections.get(historicDirections.size() - 1 - i);
+    //  if (dir < 0) {
+    //    continue;
+    //  }
+    //  previousDirectionWeights[i][dir][direction] += (reward * rewardScaler);
+    //}
+    
   }
   
-  private void checkForAndHandleGoal(){
+  private void checkForAndHandleGoal(int direction){
     if (shouldReset) {
       shouldReset = false;
       position[0] = START[0];
       position[1] = START[1];
+      timeTaken = 0;
+      historicPositions = new ArrayList<int[]>();
+      historicDirections = new ArrayList<Integer>();
       delay(2000);
     }
     if (testEnv.getType(position[0], position[1]).equals("Goal")) {
@@ -241,9 +293,10 @@ public class ReinforcementLearner {
         recordTime = timeTaken;
         exploration *= EXPLORATION_DECAY;
       }
-      timeTaken = 0;
-      historicPositions = new ArrayList<int[]>();
-      historicDirections = new ArrayList<Integer>();
+    }
+    if (timeTaken >= recordTime * giveUpRatio) {
+      shouldReset = true;
+      reward(giveUpPunishment, direction);
     }
   }
   
