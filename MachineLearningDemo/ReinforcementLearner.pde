@@ -71,7 +71,7 @@ public class ReinforcementLearner {
     else {
       int direction = decide();
       target = getTargetFromDirection(direction);
-      double rew = calculateReward(target, direction);
+      double rew = calculateReward(target);
       reward(rew, direction);
     }
     move(target);
@@ -101,10 +101,6 @@ public class ReinforcementLearner {
   private int decide() {
     
     double[] directionValue = new double[4];    //Uses "Up", "Down", "Left", and "Right" in that order
-    for (int k = 0; k < directionValue.length; k++) {
-      print(directionValue[k] + " ");
-    }
-    print("\n");
     for (int i = 0; i < weights.length; i++) {
       for (int j = 0; j < weights[0].length; j++) {
         String s = testEnv.getType(i + position[0] - SIGHT_DISTANCE, j + position[1] - SIGHT_DISTANCE);
@@ -128,14 +124,11 @@ public class ReinforcementLearner {
     }
     
     int maxInd = 0;
-    print(directionValue[0] + " ");
     for (int i = 1; i < directionValue.length; i++) {
       if (directionValue[i] > directionValue[maxInd]) {
         maxInd = i;
       }
-      print(directionValue[i] + " ");
     }
-    print("\n");
     return maxInd;
   }
   
@@ -159,9 +152,7 @@ public class ReinforcementLearner {
     return target;
   }
   
-  private double calculateReward(int[] target, int direction) {
-    print(direction + "\n");
-    print(target[0] + " " + target[1] + "\n\n");
+  private double calculateReward(int[] target) {
     double rewardFromEnvironment = testEnv.getReward(target[0], target[1]);
     double punishmentFromTime = INITIAL_PUNISHMENT_FROM_TIME; //* Math.exp(-1 * timeTaken);
     double punishmentFromHistory = 0;
@@ -186,8 +177,6 @@ public class ReinforcementLearner {
   
   private void reward(double reward, int direction) {
     
-    print(reward + "\n");
-    
     for (int i = 0; i < weights.length; i++) {
       for (int j = 0; j < weights[0].length; j++) {
         String s = testEnv.getType(i + position[0] - SIGHT_DISTANCE, j + position[1] - SIGHT_DISTANCE);
@@ -204,10 +193,8 @@ public class ReinforcementLearner {
         else if (s.equals("Goal")) {
           squareType = 3;
         }
-        print(s + " promoting " + direction + "\t");
         weights[i][j][squareType][direction] += (reward * rewardScaler);
       }
-      print("\n");
     }
   }
   
