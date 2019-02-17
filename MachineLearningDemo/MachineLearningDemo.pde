@@ -2,7 +2,7 @@ import java.util.Random;
 import java.lang.Math;
 import java.util.Map;
 
-final int SQUARE_SIZE = 20;
+final int SQUARE_SIZE = 50;
 final int SEED = 0;
 
 boolean menuOn;
@@ -62,7 +62,12 @@ void draw() {
 }
 
 void mouseClicked() {
-  menu.handleClick();
+  if (menuOn) {
+    menu.handleClick();
+  }
+  else if (reinforcementLearnerOn) {
+    //reinforcementLearner.makeMove();
+  }
 }
 
 void turnSwarmOn() {
