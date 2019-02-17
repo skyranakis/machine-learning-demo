@@ -40,3 +40,5 @@ Swarm Intelligence (pathfinding)
    	SQUARE_SIZE = env.getSquareSize();
     	FIND_PATHWAY = pathway;
     	EXPLORE_DECAY = 0.8;
+	hungryExploration = 0.4;
+    	fullExploration = 0.2;

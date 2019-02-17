@@ -1,5 +1,6 @@
 import java.util.Random;
 import java.lang.Math;
+import java.util.Map;
 
 final int SQUARE_SIZE = 20;
 final int SEED = 0;
@@ -7,11 +8,13 @@ final int SEED = 0;
 boolean menuOn;
 boolean swarmOn;
 boolean geneticOn;
+boolean reinforcementLearnerOn;
 
 Menu menu;
 TestEnvironment testEnv;
 Swarm swarm;
 Genetic genetic;
+ReinforcementLearner reinforcementLearner;
 
 void setup() {
   size(800, 600);
@@ -21,11 +24,13 @@ void setup() {
   menuOn = true;
   swarmOn = false;
   geneticOn = false;
+  reinforcementLearnerOn = false;
   
   menu = new Menu();
   testEnv = new TestEnvironment(SQUARE_SIZE);
   swarm = new Swarm(testEnv, SEED);
   genetic = new Genetic(testEnv);
+  reinforcementLearner = new ReinforcementLearner(testEnv);
 }
 
 void draw() {
@@ -36,6 +41,8 @@ void draw() {
       case 1: turnSwarmOn();
       break;
       case 2: turnGeneticOn();
+      break;
+      case 3: turnReinforcementLearnerOn();
       break;
     }
     delay(50);
@@ -48,6 +55,10 @@ void draw() {
     genetic.makeMove();
     delay(50);
   }
+  else if (reinforcementLearnerOn) {
+    reinforcementLearner.makeMove();
+    delay(100);
+  }
 }
 
 void mouseClicked() {
@@ -58,10 +69,19 @@ void turnSwarmOn() {
   menuOn = false;
   swarmOn = true;
   geneticOn = false;
+  reinforcementLearnerOn = false;
 }
 
 void turnGeneticOn() {
   menuOn = false;
   swarmOn = false;
   geneticOn = true;
+  reinforcementLearnerOn = false;
+}
+
+void turnReinforcementLearnerOn() {
+  menuOn = false;
+  swarmOn = false;
+  geneticOn = false;
+  reinforcementLearnerOn = true;
 }

@@ -43,22 +43,12 @@ public class TestEnvironment {
     env[env.length-2][1] = "Goal";
     goalPosition[0] = env.length-2;
     goalPosition[1] = 1;
-    
-    //env[15][25] = "Goal";
-    //goalPosition[0] = 15;
-    //goalPosition[1] = 25;
-    
-    //env[35][10] = "Goal";
-    //goalPosition[0] = 35;
-    //goalPosition[1] = 10;
-    
-    //env[20][25] = "Goal";
-    //goalPosition[0] = 20;
-    //goalPosition[1] = 25;
-
   }
   
   public boolean isEnterable(int r, int c) {
+    if (r < 0 || c < 0 || r >= env.length || c >= env[0].length) {
+      return false;
+    }
     return !env[r][c].equals("Wall");
   }
   
@@ -74,6 +64,13 @@ public class TestEnvironment {
       return 10;
     }
     return 0;
+  }
+  
+  public String getType(int r, int c) {
+    if (r < 0 || c < 0 || r >= env.length || c >= env[0].length) {
+      return "Wall";
+    }
+    return env[r][c];
   }
   
   public int[] getStartPosition() {
